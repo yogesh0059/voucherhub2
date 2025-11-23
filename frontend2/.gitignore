@@ -1,0 +1,22 @@
+# Node modules (npm/yarn)
+node_modules/
+
+# Build output (React build)
+build/
+
+# Environment files (VERY IMPORTANT)
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+
+# Log files
+*.log
+
+# Misc/IDE files
+.cache/
+.vscode/
+.DS_Store
+Thumbs.db
+coverage/

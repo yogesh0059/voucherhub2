@@ -1,0 +1,24 @@
+.footer {
+  background: #1e1e2f;
+  color: #f1f1f1;
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.95rem;
+}
+
+.footer .social-icons {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.footer .social-icons a {
+  color: #f1f1f1;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+.footer .social-icons a:hover {
+  color: #4a69bd;
+}
