@@ -12,9 +12,11 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 
 // ---- CORS Best Practice ----
-// Allow Netlify/frontend + Render/backend
 app.use(cors({
-  origin: [process.env.FRONTEND_ORIGIN || '*'], // e.g. 'https://voucherhub2.netlify.app'
+  origin: [
+    'https://voucherhub2.netlify.app', // <-- Netlify prod domain
+    'http://localhost:3000'            // local dev allowed
+  ],
   credentials: true
 }));
 
