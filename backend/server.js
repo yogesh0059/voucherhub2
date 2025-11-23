@@ -10,17 +10,27 @@ const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
-app.use(cors());
+
+// ---- CORS Best Practice ----
+// Allow Netlify/frontend + Render/backend
+app.use(cors({
+  origin: [process.env.FRONTEND_ORIGIN || '*'], // e.g. 'https://voucherhub2.netlify.app'
+  credentials: true
+}));
+
 app.use(express.json());
+
+// ---- IMAGES STATIC SERVE ----
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Multer upload config
+// ---- Multer for uploads ----
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
 });
 const upload = multer({ storage });
 
+// ---- MongoDB ----
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected!'))
   .catch(err => {
@@ -33,12 +43,13 @@ let users = [
 ];
 let purchases = [];
 
-// AUTH routes
+// ---- AUTH ----
 app.post('/api/signup', (req, res) => {
   const { username, email, password, role } = req.body;
   users.push({ username, email, password, role: role || 'user' });
   res.json({ message: 'Signup successful', user: { username, email, role: role || 'user' } });
 });
+
 app.post('/api/login', (req, res) => {
   const { email, password, role } = req.body;
   const user = users.find(u => u.email === email && u.password === password && u.role === role);
@@ -56,7 +67,7 @@ app.get('/api/admin-dashboard', (req, res) => {
   res.json({ dashboard: 'Admin dashboard data' });
 });
 
-// COUPON CRUD
+// ---- COUPON CRUD ----
 app.post('/api/coupons', upload.fields([
   { name: 'thumbnail', maxCount: 1 },
   { name: 'images', maxCount: 10 }
@@ -98,6 +109,7 @@ app.get('/api/coupons', async (req, res) => {
   }
   res.json(coupons);
 });
+
 app.get('/api/coupons/:id', async (req, res) => {
   try {
     const coupon = await Coupon.findById(req.params.id);
@@ -106,6 +118,7 @@ app.get('/api/coupons/:id', async (req, res) => {
     res.status(404).json({ error: 'Coupon not found' });
   }
 });
+
 app.delete('/api/coupons/:id', async (req, res) => {
   try {
     await Coupon.findByIdAndDelete(req.params.id);
@@ -115,7 +128,7 @@ app.delete('/api/coupons/:id', async (req, res) => {
   }
 });
 
-// STRIPE PAYMENT INTENT
+// ---- STRIPE PAYMENT INTENT ----
 app.post('/api/create-payment-intent', async (req, res) => {
   const { amount } = req.body;
   try {
@@ -131,7 +144,7 @@ app.post('/api/create-payment-intent', async (req, res) => {
   }
 });
 
-// USER PURCHASE
+// ---- USER PURCHASE ----
 app.post('/api/user-purchased', (req, res) => {
   const { user, couponId } = req.body;
   purchases.push({ user, couponId });
@@ -150,6 +163,7 @@ app.get('/api/user-visited', (req, res) => {
   res.json([]);
 });
 
+// ---- ROOT ----
 app.get('/', (req, res) => {
   res.send('VoucherHub backend is running!');
 });

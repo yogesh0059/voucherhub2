@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { API_URL } from '../api';
 
 // Best practice: .env se key! (REACT_APP_STRIPE_PUBLIC_KEY MUST BE PRESENT in frontend/.env!)
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
@@ -16,8 +17,8 @@ function CheckoutForm({ onSuccess, couponId, userEmail }) {
     setPaying(true);
     setMsg("Processing...");
 
-    // 1. Always get clientSecret freshly for each payment!
-    const res = await fetch("/api/create-payment-intent", {
+    // 1. ALWAYS use absolute API_URL in production!
+    const res = await fetch(`${API_URL}/api/create-payment-intent`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: 199 }) // or coupon.price if dynamic!
@@ -41,8 +42,8 @@ function CheckoutForm({ onSuccess, couponId, userEmail }) {
     } else if (result.paymentIntent.status === "succeeded") {
       setMsg("Payment Success!");
 
-      // 3. (optional) Mark coupon as purchased in DB!
-      await fetch("/api/user-purchased", {
+      // 3. Mark coupon as purchased in DB
+      await fetch(`${API_URL}/api/user-purchased`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
