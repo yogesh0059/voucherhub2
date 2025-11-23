@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api';
 
 export default function CouponAddForm({ user }) {
   const [form, setForm] = useState({
@@ -35,11 +36,13 @@ export default function CouponAddForm({ user }) {
     form.images.forEach(file => data.append('images', file));
 
     try {
-      await axios.post('http://localhost:5000/api/coupons', data, {
+      await axios.post(`${API_URL}/api/coupons`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setMessage('Coupon added!');
-      setForm({ title: '', price: '', discount: '', expiry: '', code: '', description: '', thumbnail: null, images: [] });
+      setForm({
+        title: '', price: '', discount: '', expiry: '', code: '', description: '', thumbnail: null, images: []
+      });
     } catch {
       setMessage('Error!');
     }
@@ -67,17 +70,14 @@ export default function CouponAddForm({ user }) {
         <input name="discount" placeholder="Discount (%)" value={form.discount} onChange={handleChange} style={inputStyle} required /><br />
         <input name="expiry" type="date" placeholder="Expiry" value={form.expiry} onChange={handleChange} style={inputStyle} required /><br />
         <input name="code" placeholder="Code" value={form.code} onChange={handleChange} style={inputStyle} required /><br />
-        
         {/* THUMBNAIL FILE */}
-        <label style={labelStyle}>Thumbnail Image (choose file):<br/>
+        <label style={labelStyle}>Thumbnail Image (choose file):<br />
           <input name="thumbnail" type="file" accept="image/*" onChange={handleChange} style={inputStyle} required />
-        </label><br/>
-
+        </label><br />
         {/* MULTIPLE PRODUCT IMAGES */}
-        <label style={labelStyle}>Gallery Images (choose multiple):<br/>
+        <label style={labelStyle}>Gallery Images (choose multiple):<br />
           <input name="images" type="file" multiple accept="image/*" onChange={handleChange} style={inputStyle} required />
-        </label><br/>
-
+        </label><br />
         <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} style={{ ...inputStyle, height: 60, resize: "vertical", fontFamily: "inherit" }} /><br />
         <button style={{
           width: "100%", padding: "11px", marginTop: 10, fontSize: 18,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Payment from './Payment';
-// Agar user context/store use karte ho toh yahan import karao
+import { API_URL } from '../api';
 // import { AuthContext } from '../context/AuthContext';
 
 export default function CouponDetail() {
@@ -14,7 +14,7 @@ export default function CouponDetail() {
   const userEmail = 'testuser@demo.com'; // Demo ke liye hardcoded, replace with real user email
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/coupons/${id}`)
+    axios.get(`${API_URL}/api/coupons/${id}`)
       .then(res => setCoupon(res.data));
   }, [id]);
 
@@ -25,6 +25,12 @@ export default function CouponDetail() {
     const visible = code.slice(0, Math.floor(code.length/2));
     const masked = "*".repeat(code.length - visible.length);
     return visible + masked;
+  }
+
+  // Safe image URL builder
+  function getImgUrl(url) {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${API_URL}${url}`;
   }
 
   // Payment ke success ke baad
@@ -43,7 +49,7 @@ export default function CouponDetail() {
     }}>
       {/* Main image ― pehli gallery image */}
       <img
-        src={`http://localhost:5000${coupon.images && coupon.images[0]}`}
+        src={getImgUrl(coupon.images && coupon.images[0])}
         style={{width:'100%', height:220, borderRadius:12, objectFit:'cover'}}
         alt="main"
       />
@@ -80,7 +86,7 @@ export default function CouponDetail() {
         {coupon.images && coupon.images.length > 0 && coupon.images.map((url, i) => (
           <img
             key={i}
-            src={`http://localhost:5000${url}`}
+            src={getImgUrl(url)}
             alt={`img ${i + 1}`}
             style={{
               width: 120,

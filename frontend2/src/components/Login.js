@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Login.css';
+import { API_URL } from '../api'; // path agar api.js src ke andar hai
 
 const Login = ({ setUser }) => {
   const [role, setRole] = useState('user');
@@ -22,7 +23,8 @@ const Login = ({ setUser }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/login',{...credentials, role});
+      // Variable based, no manual update ever needed
+      const res = await axios.post(`${API_URL}/api/login`, { ...credentials, role });
 
       if (res.status === 200 && res.data.user) {
         alert('Login successful!');

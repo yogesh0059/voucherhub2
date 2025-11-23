@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../api';
 
 export default function CouponsList() {
   const [coupons, setCoupons] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/coupons')
+    axios.get(`${API_URL}/api/coupons`)
       .then(res => setCoupons(res.data));
   }, []);
+
+  // Helper for correct image URL
+  const getImgUrl = (img) =>
+    img && (img.startsWith('http') ? img : `${API_URL}${img}`);
 
   return (
     <div style={{ maxWidth: "1140px", margin: "32px auto", padding: "24px" }}>
@@ -27,7 +32,7 @@ export default function CouponsList() {
           }}
             onClick={() => navigate(`/coupons/${coupon._id}`)}>
             <img
-              src={coupon.thumbnail}
+              src={getImgUrl(coupon.thumbnail ? coupon.thumbnail : (coupon.images && coupon.images[0]))}
               style={{
                 width: "100%",
                 height: "128px",

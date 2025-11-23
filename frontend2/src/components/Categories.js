@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/Categories.css';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../api';
 
 const Categories = () => {
   const [coupons, setCoupons] = useState([]);
@@ -10,12 +11,11 @@ const Categories = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/coupons')
+    axios.get(`${API_URL}/api/coupons`)
       .then(res => setCoupons(res.data))
       .catch(err => console.error('Error loading coupons from backend', err));
   }, []);
 
-  // search+sort
   const filtered = coupons
     .filter(v => v.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
@@ -24,6 +24,10 @@ const Categories = () => {
       if (sort === 'expiry') return new Date(a.expiry) - new Date(b.expiry);
       return 0;
     });
+
+  // Helper: backend url for image  
+  const getImgUrl = (img) =>
+    img && (img.startsWith('http') ? img : `${API_URL}${img}`);
 
   return (
     <section id="categories" className="categories">
@@ -49,10 +53,9 @@ const Categories = () => {
             className="voucher-card" 
             onClick={() => navigate(`/coupons/${v._id}`)}
           >
-            {/* ==== IMAGE TAG UPDATED ==== */}
-            <img 
-              src={`http://localhost:5000${(v.thumbnail ? v.thumbnail : (v.images && v.images[0]))}`} 
-              alt={v.title} 
+            <img
+              src={getImgUrl(v.thumbnail ? v.thumbnail : (v.images && v.images[0]))}
+              alt={v.title}
               className="coupon-thumbnail"
             />
             <h4>{v.title}</h4>

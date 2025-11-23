@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Signup.css';
+import { API_URL } from '../api'; // Import path yahi, agar api.js src ke andar hai
 
 const Signup = () => {
   const [role, setRole] = useState('user');
@@ -23,9 +24,10 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/signup', {
+      // Variable based endpoint
+      const res = await axios.post(`${API_URL}/api/signup`, {
         ...formData,
-        role: role
+        role: role,
       });
 
       if (res.data.success) {

@@ -1,5 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_URL } from '../api';
+
+const inputStyle = {
+  padding: "11px 14px",
+  background: "#fff",
+  border: "1.5px solid #c9b7eb",
+  borderRadius: 9,
+  fontSize: 15,
+  outline: "none",
+  boxShadow: "0 1.5px 8px #ece3fb",
+};
 
 export default function AddCoupon({ user }) {
   const [form, setForm] = useState({
@@ -44,9 +55,10 @@ export default function AddCoupon({ user }) {
       if (thumbnail) data.append("thumbnail", thumbnail);
       images.forEach((file) => data.append("images", file));
 
-      const res = await axios.post("http://localhost:5000/api/coupons", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await axios.post(
+        `${API_URL}/api/coupons`, data,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
       setMsg(res.data.success ? "✅ Coupon added successfully!" : "❌ Error occurred!");
       setLoading(false);
@@ -144,15 +156,3 @@ export default function AddCoupon({ user }) {
     </div>
   );
 }
-
-// Fancy input style (inline, because you asked for UI look!)
-const inputStyle = {
-  padding: "11px 14px",
-  background: "#fff",
-  border: "1.5px solid #c9b7eb",
-  borderRadius: 9,
-  fontSize: 15,
-  outline: "none",
-  boxShadow: "0 1.5px 8px #ece3fb",
-};
-
