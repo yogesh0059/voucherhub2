@@ -5,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 require('dotenv').config();
 
-const Coupon = require('./models/Coupon');
+const Coupon = require('./models/coupon');
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
